@@ -44,3 +44,11 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+/client/.idea/.gitignore
+/client/.idea/client.iml
+/client/.idea/codeStyles/codeStyleConfig.xml
+/client/.idea/misc.xml
+/client/.idea/modules.xml
+/client/.idea/codeStyles/Project.xml
+/client/.idea/inspectionProfiles/Project_Default.xml
+/client/.idea/vcs.xml
