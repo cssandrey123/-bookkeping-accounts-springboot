@@ -1,4 +1,4 @@
 export interface AccountModel {
-  id: string;
+  accountNumber: number;
   name: string;
 }

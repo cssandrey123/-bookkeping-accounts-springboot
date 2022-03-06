@@ -24,9 +24,12 @@ export class TransactionRulesModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.editMode = this.existingRule ? true : false;
-    this.allAccounts = this.accountsService.getAccounts();
-    this.rulesFormGroup = this.initializeFormGroup(this.existingRule);
-    this.setAccountsFilters();
+    this.accountsService.getAccounts().subscribe(accounts => {
+      this.allAccounts = accounts;
+      this.rulesFormGroup = this.initializeFormGroup(this.existingRule);
+      this.setAccountsFilters();
+    });
+
   }
 
   saveRule(): void {
@@ -55,9 +58,11 @@ export class TransactionRulesModalComponent implements OnInit {
     );
   }
 
-  private filter = (value: string): AccountModel[] => {
-    const filterValue = value.trim().toLowerCase();
-    return this.allAccounts.filter(account => account.id.toLowerCase().includes(filterValue));
+  private filter = (value: number): AccountModel[] => {
+    if (value === null) {
+      return this.allAccounts;
+    }
+    return this.allAccounts.filter(account => account.accountNumber.toString().includes(value.toString()));
   }
 
   private initializeFormGroup(existingRule?: TransactionRuleModel): FormGroup {

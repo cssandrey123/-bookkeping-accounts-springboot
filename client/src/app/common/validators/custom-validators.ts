@@ -23,7 +23,7 @@ export function differentValuesValidator(firstControlName: string): ValidatorFn 
 
 export function accountValidator(allAccounts: AccountModel[]): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const isIn = allAccounts.some(account => account.id === control.value);
+    const isIn = allAccounts.some(account => account.accountNumber === control.value);
     return !isIn ? {invalidAccount: true} : null;
   };
 }

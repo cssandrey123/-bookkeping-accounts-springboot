@@ -3,13 +3,20 @@ import {NgxCsvParser, NgxCSVParserError} from 'ngx-csv-parser';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {AccountModel} from '../models/account.model';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
+
+const API = environment.API_URL;
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountsService {
 
-  constructor(private ngxCsvParser: NgxCsvParser ) { }
+  constructor(
+    private ngxCsvParser: NgxCsvParser,
+    private httpClient: HttpClient
+  ) { }
 
   parseCSV(file: File): Observable<AccountModel []> {
     return this.ngxCsvParser.parse(file, {header: false, delimiter: ','}).pipe(
@@ -19,7 +26,7 @@ export class AccountsService {
         } else {
           return files.map(rowFile => {
             return {
-              id: rowFile[0],
+              accountNumber: rowFile[0],
               name: rowFile[1]
             };
           });
@@ -32,7 +39,7 @@ export class AccountsService {
     localStorage.setItem('saved_accounts', JSON.stringify(accounts));
   }
 
-  getAccounts(): AccountModel[] {
-    return JSON.parse(localStorage.getItem('saved_accounts'));
+  getAccounts(): Observable<AccountModel[]> {
+    return this.httpClient.get<AccountModel[]>(API + '/accounts');
   }
 }

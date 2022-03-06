@@ -25,7 +25,7 @@ export class TransactionRulesScreenComponent implements OnInit, OnDestroy {
 
   allRules: TransactionRuleModel[] = [];
   allAccounts: AccountModel[] = [];
-  rulesEventSubscription: Subscription;
+
 
   constructor(private transactionRulesService: TransactionRulesService,
               private modalService: MatDialog,
@@ -33,8 +33,10 @@ export class TransactionRulesScreenComponent implements OnInit, OnDestroy {
               private accountsService: AccountsService) { }
 
   ngOnInit(): void {
-    this.allAccounts = this.accountsService.getAccounts();
-    this.rulesEventSubscription = this.transactionRulesService.getRules().subscribe(rules => {
+    this.accountsService.getAccounts().subscribe(accounts => {
+      this.allAccounts = accounts;
+    });
+    this.transactionRulesService.getRules().subscribe(rules => {
       //Todo chack why property binding not trigger onChanges in transaction-rules-table
       // if we reasign rules directly
       this.allRules = [];
@@ -42,9 +44,7 @@ export class TransactionRulesScreenComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.rulesEventSubscription.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 
   addTransactionRule(): void {
     const modalRef = this.modalService.open(TransactionRulesModalComponent);

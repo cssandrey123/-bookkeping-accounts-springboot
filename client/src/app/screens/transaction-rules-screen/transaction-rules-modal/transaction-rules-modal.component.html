@@ -6,15 +6,15 @@
     <div class="transaction-rules-modal-content" [formGroup]="rulesFormGroup">
       <mat-form-field>
         <mat-label>Debit Account</mat-label>
-        <input type="text"
+        <input type="number"
                autocomplete="off"
                placeholder="Add a debit account"
                matInput
                [formControl]="rulesFormGroup.controls['debitAccount']"
                [matAutocomplete]="debitAutocomlete">
         <mat-autocomplete #debitAutocomlete="matAutocomplete">
-          <mat-option *ngFor="let option of debitFilteredAccounts | async" [value]="option.id">
-            {{option.id}}
+          <mat-option *ngFor="let option of debitFilteredAccounts | async" [value]="option.accountNumber">
+            {{option.accountNumber}}
           </mat-option>
         </mat-autocomplete>
         <mat-error>
@@ -25,14 +25,14 @@
       <mat-form-field>
         <mat-label>Credit Account</mat-label>
         <input autocomplete="off"
-               type="text"
+               type="number"
                placeholder="Add a credit account"
                matInput
                [formControl]="rulesFormGroup.controls['creditAccount']"
                [matAutocomplete]="creditAutocomplete">
         <mat-autocomplete #creditAutocomplete="matAutocomplete">
-          <mat-option *ngFor="let option of creditFilteredAccounts | async" [value]="option.id">
-            {{option.id}}
+          <mat-option *ngFor="let option of creditFilteredAccounts | async" [value]="option.accountNumber">
+            {{option.accountNumber}}
           </mat-option>
         </mat-autocomplete>
         <mat-error>

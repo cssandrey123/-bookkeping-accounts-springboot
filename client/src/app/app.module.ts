@@ -9,6 +9,7 @@ import {AccountsScreenModule} from './screens/accounts-screen';
 import {LandingScreenModule} from './screens/landing-screen';
 import {RouterModule} from '@angular/router';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     AccountsScreenModule,
     LandingScreenModule,
     BrowserAnimationsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

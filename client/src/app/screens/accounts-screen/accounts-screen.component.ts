@@ -14,7 +14,9 @@ export class AccountsScreenComponent implements OnInit {
   constructor(private accountsService: AccountsService) { }
 
   ngOnInit(): void {
-    this.allAccounts = this.accountsService.getAccounts();
+    this.accountsService.getAccounts().subscribe((accounts) => {
+      this.allAccounts = accounts;
+    });
     this.updateScreenMessages();
   }
 

@@ -9,7 +9,7 @@ import {
   accountValidator
 } from '../../common';
 import {map, startWith} from 'rxjs/operators';
-import {combineLatest, Observable} from 'rxjs';
+import {combineLatest, forkJoin, Observable} from 'rxjs';
 import {BreadcrumbModel} from '../../common/components/breadcrumbs/model/breadcrumbs.model';
 
 @Component({
@@ -48,15 +48,13 @@ export class ValidateTransactionsScreenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.allAccounts = this.accountsService.getAccounts();
-    if (this.allAccounts?.length > 0) {
-      this.rulesService.getRules().subscribe(rules => {
-        this.allRules = rules;
-      });
+    forkJoin([this.accountsService.getAccounts(), this.rulesService.getRules()]).subscribe(([accounts, rules]) => {
+      this.allAccounts = accounts;
+      this.allRules = rules;
       this.accountsFormGroup = this.initializeFormGroup();
       this.setAccountsFilters();
       this.filterRules();
-    }
+    });
   }
 
   private setAccountsFilters(): void {
@@ -71,9 +69,11 @@ export class ValidateTransactionsScreenComponent implements OnInit {
     );
   }
 
-  private filter = (value: string): AccountModel[] => {
-    const filterValue = value.trim().toLowerCase();
-    return this.allAccounts.filter(account => account.id.toLowerCase().includes(filterValue));
+  private filter = (value: number): AccountModel[] => {
+    if (value === null) {
+      return this.allAccounts;
+    }
+    return this.allAccounts.filter(account => account.accountNumber.toString().includes(value.toString()));
   }
 
   private initializeFormGroup(existingRule?: TransactionRuleModel): FormGroup {

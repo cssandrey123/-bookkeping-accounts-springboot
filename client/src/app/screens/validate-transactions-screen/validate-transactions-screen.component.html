@@ -18,15 +18,15 @@
     <div class="validate-transaction-fields">
       <mat-form-field *ngIf="whichAccounts === 'both' || whichAccounts === 'debit'">
         <mat-label>Select a debit account</mat-label>
-        <input type="text"
+        <input type="number"
                autocomplete="off"
                placeholder="Debit Account"
                matInput
                [formControl]="accountsFormGroup.controls['debitAccount']"
                [matAutocomplete]="debitAutocomlete">
         <mat-autocomplete #debitAutocomlete="matAutocomplete">
-          <mat-option *ngFor="let option of debitFilteredAccounts | async" [value]="option.id">
-            {{option.id}}
+          <mat-option *ngFor="let option of debitFilteredAccounts | async" [value]="option.accountNumber">
+            {{option.accountNumber}}
           </mat-option>
         </mat-autocomplete>
         <mat-error>
@@ -37,14 +37,14 @@
       <mat-form-field *ngIf="whichAccounts === 'both' || whichAccounts === 'credit'">
         <mat-label>Select a credit account</mat-label>
         <input autocomplete="off"
-               type="text"
+               type="number"
                placeholder="Credit Account"
                matInput
                [formControl]="accountsFormGroup.controls['creditAccount']"
                [matAutocomplete]="creditAutocomplete">
         <mat-autocomplete #creditAutocomplete="matAutocomplete">
-          <mat-option *ngFor="let option of creditFilteredAccounts | async" [value]="option.id">
-            {{option.id}}
+          <mat-option *ngFor="let option of creditFilteredAccounts | async" [value]="option.accountNumber">
+            {{option.accountNumber}}
           </mat-option>
         </mat-autocomplete>
         <mat-error>
