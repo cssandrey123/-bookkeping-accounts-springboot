@@ -1,6 +1,6 @@
 export interface TransactionRuleModel {
   id?: number;
-  debitAccount: string;
-  creditAccount: string;
+  debitAccount: number;
+  creditAccount: number;
   description: string;
 }

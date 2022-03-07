@@ -35,8 +35,8 @@ export class AccountsService {
     );
   }
 
-  saveAccounts(accounts: AccountModel[]): void {
-    localStorage.setItem('saved_accounts', JSON.stringify(accounts));
+  saveAccounts(accounts: AccountModel[]): Observable<AccountModel[]> {
+    return this.httpClient.post<AccountModel[]>(API + '/accounts/add', accounts);
   }
 
   getAccounts(): Observable<AccountModel[]> {

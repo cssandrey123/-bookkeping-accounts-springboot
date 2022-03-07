@@ -51,8 +51,8 @@ public class RuleService {
 
     Rule existingRule = ruleById.get();
     existingRule.setDescription(ruleForUpdate.getDescription());
-    existingRule.setCreditAccountId(ruleForUpdate.getCreditAccountId());
-    existingRule.setDebitAccountId(ruleForUpdate.getDebitAccountId());
+    existingRule.setCreditAccount(ruleForUpdate.getCreditAccount());
+    existingRule.setDebitAccount(ruleForUpdate.getDebitAccount());
     return new ResponseEntity<>(ruleRepository.save(existingRule), HttpStatus.OK);
   }
 

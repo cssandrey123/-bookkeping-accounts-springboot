@@ -8,8 +8,8 @@ import {
   differentValuesValidator,
   accountValidator
 } from '../../common';
-import {map, startWith} from 'rxjs/operators';
-import {combineLatest, forkJoin, Observable} from 'rxjs';
+import {concatMap, map, startWith} from 'rxjs/operators';
+import {combineLatest, Observable} from 'rxjs';
 import {BreadcrumbModel} from '../../common/components/breadcrumbs/model/breadcrumbs.model';
 
 @Component({
@@ -48,9 +48,13 @@ export class ValidateTransactionsScreenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    forkJoin([this.accountsService.getAccounts(), this.rulesService.getRules()]).subscribe(([accounts, rules]) => {
-      this.allAccounts = accounts;
-      this.allRules = rules;
+    this.accountsService.getAccounts().pipe(
+      concatMap(allAccounts => {
+        this.allAccounts = allAccounts;
+        return this.rulesService.getRules();
+      })
+    ).subscribe((allRules) => {
+      this.allRules = allRules;
       this.accountsFormGroup = this.initializeFormGroup();
       this.setAccountsFilters();
       this.filterRules();

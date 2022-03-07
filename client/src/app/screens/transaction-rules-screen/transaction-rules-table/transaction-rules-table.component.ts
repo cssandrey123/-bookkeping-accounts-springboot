@@ -61,7 +61,7 @@ export class TransactionRulesTableComponent implements OnInit, AfterViewInit {
   }
 
   addMockRules(): void {
-    this.transactionRulesSrvc.addMockedRules();
+    this.transactionRulesSrvc.addMockedRules().subscribe();
   }
 
 }

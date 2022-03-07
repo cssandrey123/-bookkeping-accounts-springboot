@@ -56,16 +56,11 @@ export class TransactionRulesScreenComponent implements OnInit, OnDestroy {
   }
 
   saveRule(rule: TransactionRuleModel): void {
-    if (this.allRules.length > 0) {
-      rule.id = this.allRules[this.allRules.length - 1].id + 1;
-    } else {
-      rule.id = 1;
-    }
-    this.transactionRulesService.addRule(rule);
+    this.transactionRulesService.addRule(rule).subscribe();
   }
 
   deleteRule(rule: TransactionRuleModel): void {
-    this.transactionRulesService.deleteRule(rule);
+    this.transactionRulesService.deleteRule(rule).subscribe();
   }
 
   editRule(rule: TransactionRuleModel): void {
@@ -75,7 +70,7 @@ export class TransactionRulesScreenComponent implements OnInit, OnDestroy {
 
     modalRef.afterClosed().subscribe((editedRule: TransactionRuleModel) => {
       if (editedRule) {
-        this.transactionRulesService.editRule(editedRule);
+        this.transactionRulesService.editRule(editedRule).subscribe();
       }
     });
   }

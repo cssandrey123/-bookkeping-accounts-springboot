@@ -1,8 +1,12 @@
 import {Injectable} from '@angular/core';
 import {TransactionRuleModel} from '../models/transaction-rule.model';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, concat, forkJoin, Observable} from 'rxjs';
 import {MOCK_RULES} from '../constants';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
+import {tap} from 'rxjs/operators';
 
+const API = environment.API_URL;
 @Injectable({
   providedIn: 'root'
 })
@@ -11,47 +15,54 @@ export class TransactionRulesService {
   private allRules: TransactionRuleModel[] = [];
   rulesChangeEvent: BehaviorSubject<TransactionRuleModel[]> = new BehaviorSubject<TransactionRuleModel[]>([]);
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
   }
 
   getRules(): BehaviorSubject<TransactionRuleModel[]> {
     if (!this.allRules || this.allRules.length === 0) {
-      this.allRules = this._getRules();
+      this._getRules().subscribe(rules => {
+        this.allRules = rules;
+        this.rulesChangeEvent.next(rules);
+      });
     }
-    this.rulesChangeEvent.next(this.allRules);
     return this.rulesChangeEvent;
   }
 
-  addRule(rule: TransactionRuleModel): void {
-    this.allRules.push(rule);
-    this._saveRules(this.allRules);
-    this.rulesChangeEvent.next(this.allRules);
+  addRule(rule: TransactionRuleModel): Observable<TransactionRuleModel> {
+    return this.httpClient.post<TransactionRuleModel>(API + '/rules/add', rule).pipe(
+      tap(newRule => {
+        if (newRule) {
+          this.allRules.push(newRule);
+          this.rulesChangeEvent.next(this.allRules);
+        }
+      })
+    );
   }
 
-  editRule(editedRule: TransactionRuleModel): void {
-    const ruleIndex = this.allRules.findIndex(rule => rule.id === editedRule.id);
-    this.allRules[ruleIndex] = editedRule;
-    this._saveRules(this.allRules);
-    this.rulesChangeEvent.next(this.allRules);
+  editRule(ruleToEdit: TransactionRuleModel): Observable<TransactionRuleModel> {
+    return this.httpClient.put<TransactionRuleModel>(API + '/rules/update/' + ruleToEdit.id, ruleToEdit).pipe(
+      tap(editedRule => {
+        const ruleIndex = this.allRules.findIndex(rule => rule.id === editedRule.id);
+        this.allRules[ruleIndex] = editedRule;
+        this.rulesChangeEvent.next(this.allRules);
+      })
+    );
   }
 
-  deleteRule(rule: TransactionRuleModel): void {
-    this.allRules = this.allRules.filter(filteredRule => filteredRule.id !== rule.id);
-    this._saveRules(this.allRules);
-    this.rulesChangeEvent.next(this.allRules);
+  deleteRule(rule: TransactionRuleModel): Observable<number> {
+    return this.httpClient.delete<number>(API + '/rules/delete/' + rule.id).pipe(
+      tap(deletedRuleId => {
+        this.allRules = this.allRules.filter(filteredRule => filteredRule.id !== deletedRuleId);
+        this.rulesChangeEvent.next(this.allRules);
+      })
+    );
   }
 
-  addMockedRules(): void {
-    this.allRules = MOCK_RULES;
-    this._saveRules(this.allRules);
-    this.rulesChangeEvent.next(this.allRules);
+  addMockedRules(): Observable<any> {
+    return concat(...MOCK_RULES.map(mockedRule => this.addRule(mockedRule as TransactionRuleModel))).pipe();
   }
 
-  private _saveRules(rules: TransactionRuleModel[]): void {
-    localStorage.setItem('transaction_rules', JSON.stringify(rules));
-  }
-
-  private _getRules(): TransactionRuleModel[] {
-    return JSON.parse(localStorage.getItem('transaction_rules')) || [];
+  private _getRules(): Observable<TransactionRuleModel[]> {
+    return this.httpClient.get<TransactionRuleModel[]>(API + '/rules');
   }
 }

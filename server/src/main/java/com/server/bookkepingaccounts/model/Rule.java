@@ -30,10 +30,10 @@ public class Rule {
   private Long id;
 
   @Column(nullable = false)
-  private Long debitAccountId;
+  private Long debitAccount;
 
   @Column(nullable = false)
-  private Long creditAccountId;
+  private Long creditAccount;
 
   @Column(nullable = false)
   private String description;
@@ -41,16 +41,16 @@ public class Rule {
   @JsonIgnore
   public boolean isValidRule() {
     return (
-      debitAccountId != null && creditAccountId != null &&
+      debitAccount != null && creditAccount != null &&
       this.description != null && !description.isEmpty()
     );
   }
 
   public boolean hasValidAccounts(List<Account> allAccounts) {
     Boolean creditAccountExists = allAccounts.stream()
-            .filter(account -> this.creditAccountId.equals(account.getAccountNumber())).findFirst().isPresent();
+            .filter(account -> this.creditAccount.equals(account.getAccountNumber())).findFirst().isPresent();
     Boolean debitAccountExists = allAccounts.stream()
-            .filter(account -> this.debitAccountId.equals(account.getAccountNumber())).findFirst().isPresent();
+            .filter(account -> this.debitAccount.equals(account.getAccountNumber())).findFirst().isPresent();
 
     return creditAccountExists && debitAccountExists;
   }

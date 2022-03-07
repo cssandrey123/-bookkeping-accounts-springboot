@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {AccountsService, AccountModel} from '../../common';
 import {ACCOUNTS_SCREEN_MESSAGE} from '../../common';
+import {concatMap} from 'rxjs/operators';
+import {throwError} from 'rxjs';
 
 @Component({
   selector: 'app-accounts-screen',
@@ -22,15 +24,27 @@ export class AccountsScreenComponent implements OnInit {
 
   readCSV(event: any): void {
     const file = event.target.files[0];
-    this.accountsService.parseCSV(file).subscribe((parsedFiles) => {
-      if (parsedFiles?.length) {
-        this.accountsService.saveAccounts(parsedFiles);
-        this.allAccounts = parsedFiles;
-        this.updateScreenMessages();
-      }
-    }, error => {
-      console.log(error);
+    this.accountsService.parseCSV(file).pipe(
+      concatMap((parsedFiles) => {
+        if (parsedFiles?.length) {
+          return this.accountsService.saveAccounts(parsedFiles);
+        } else {
+          return throwError('Cannot parse CSV file')
+        }
+      })
+    ).subscribe(savedAccounts => {
+      this.allAccounts = savedAccounts;
+      this.updateScreenMessages();
     });
+    // this.accountsService.parseCSV(file).subscribe((parsedFiles) => {
+    //   if (parsedFiles?.length) {
+    //     this.accountsService.saveAccounts(parsedFiles);
+    //     this.allAccounts = parsedFiles;
+    //     this.updateScreenMessages();
+    //   }
+    // }, error => {
+    //   console.log(error);
+    // });
   }
 
   updateScreenMessages(): void {
